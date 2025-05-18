@@ -1,5 +1,7 @@
 'use strict';
 
+const Submission = require('../models/Submission');
+const enqueueSubmission = require('../utils/queue');
 
 /**
  * Get submission status and results
@@ -9,28 +11,18 @@
  * returns inline_response_200_3
  **/
 exports.getSubmissionStatus = function(id) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "results" : [ {
-    "input" : "input",
-    "actual" : "actual",
-    "expected" : "expected",
-    "passed" : true,
-    "error" : "error"
-  }, {
-    "input" : "input",
-    "actual" : "actual",
-    "expected" : "expected",
-    "passed" : true,
-    "error" : "error"
-  } ],
-  "status" : "status"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+  return new Promise(async function(resolve, reject) {
+    try {
+      const submission = await Submission.findById({ _id: id });
+      if (!submission) {
+        return reject({ status: 404, message: 'Submission not found' });
+      }
+      resolve({
+        status: submission.status,
+        results: submission.status === 'DONE' ? submission.results : null
+      });
+    } catch (err) {
+      reject({ status: 500, message: err.message });
     }
   });
 }
@@ -44,16 +36,15 @@ exports.getSubmissionStatus = function(id) {
  * returns inline_response_202
  **/
 exports.submitSolution = function(body) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "submissionId" : "submissionId",
-  "message" : "message"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+  return new Promise(async function(resolve, reject) {
+    try {
+      const { userId, exerciseId, sourceCode } = body;
+      const submission = new Submission({ userId, exerciseId, sourceCode });
+      await submission.save();
+      await enqueueSubmission(submission);
+      resolve({ message: 'Submission received', submissionId: submission._id });
+    } catch (err) {
+      reject({ status: 500, message: err.message });
     }
   });
 }
