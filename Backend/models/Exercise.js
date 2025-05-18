@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const TestCaseSchema = new mongoose.Schema({
   input: String,
-  expected: String
+  output: String
 });
 
 const ExerciseSchema = new mongoose.Schema({

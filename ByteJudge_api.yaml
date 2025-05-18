@@ -571,14 +571,11 @@ paths:
             schema:
               type: object
               properties:
-                userId:
-                  type: string
                 exerciseId:
                   type: string
                 sourceCode:
                   type: string
               required:
-                - userId
                 - exerciseId
                 - sourceCode
       responses:
@@ -623,7 +620,7 @@ paths:
                       properties:
                         input:
                           type: string
-                        expected:
+                        output:
                           type: string
                         actual:
                           type: string
@@ -678,7 +675,7 @@ paths:
                     properties:
                       input:
                         type: string
-                      expected:
+                      output:
                         type: string
                 timeLimit:
                   type: number
@@ -731,7 +728,7 @@ paths:
                       properties:
                         input:
                           type: string
-                        expected:
+                        output:
                           type: string
                   timeLimit:
                     type: number

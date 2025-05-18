@@ -2,7 +2,7 @@ const Docker = require('dockerode');
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
-const Exercise = require('./models/Exercise');
+const Exercise = require('../models/Exercise');
 const docker = new Docker();
 
 module.exports = async function runSubmission(submission) {
@@ -22,7 +22,7 @@ module.exports = async function runSubmission(submission) {
 
   const container = await docker.createContainer({
     Image: 'bytejudge-c-runner',
-    Cmd: ['/app/run.sh'],
+    Cmd: ['/runner/run.sh'],
     WorkingDir: '/app',
     Env: [`TIME_LIMIT=${exercise.timeLimit}s`],
     HostConfig: {
@@ -47,9 +47,9 @@ module.exports = async function runSubmission(submission) {
     const userOutput = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8').trim() : '';
     results.push({
       input: testCase.input,
-      expected: testCase.expected,
+      expected: testCase.output,
       actual: userOutput,
-      passed: userOutput === testCase.expected.trim()
+      passed: userOutput === testCase.output.trim()
     });
   });
 

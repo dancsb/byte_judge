@@ -11,14 +11,33 @@ const Exercise = require('../models/Exercise');
 exports.createExercise = function(body) {
   return new Promise(async function(resolve, reject) {
     try {
-      const newExercise = new Exercise(body);
+      const { title, description, testCases, timeLimit, memoryLimitMB } = body;
+
+      if (!testCases || testCases.length < 2) {
+        return reject({ status: 400, message: 'At least 2 input-output pairs are required' });
+      }
+
+      const formattedTestCases = testCases.map(testCase => ({
+        input: testCase.input,
+        output: testCase.output,
+      }));
+
+      const newExercise = new Exercise({
+        title,
+        description,
+        testCases: formattedTestCases,
+        timeLimit,
+        memoryLimitMB,
+      });
+
       await newExercise.save();
       resolve({ exerciseId: newExercise._id });
     } catch (err) {
-      reject(err);
+      reject({ status: 500, message: 'Failed to create exercise', error: err.message });
     }
   });
 }
+
 
 /**
  * Get details of a single exercise
@@ -29,16 +48,25 @@ exports.createExercise = function(body) {
 exports.getExercise = function(id) {
   return new Promise(async function(resolve, reject) {
     try {
-      const exercise = await Exercise.findById(id);
+      const exercise = await Exercise.findById({ _id: id });
       if (!exercise) {
-        return reject({ message: 'Exercise not found' });
+        return reject({ status: 404, message: 'Exercise not found' });
       }
-      resolve(exercise);
+      resolve({
+        id: exercise._id,
+        title: exercise.title,
+        description: exercise.description,
+        testCases: exercise.testCases.slice(0, 2).map(testCase => ({
+          input: testCase.input,
+          output: testCase.output
+        }))
+      });
     } catch (err) {
-      reject(err);
+      reject({ status: 500, message: err.message });
     }
   });
 }
+
 
 /**
  * List all exercises
@@ -48,10 +76,15 @@ exports.getExercise = function(id) {
 exports.listExercises = function() {
   return new Promise(async function(resolve, reject) {
     try {
-      const exercises = await Exercise.find();
-      resolve(exercises);
+      const exercises = await Exercise.find({});
+      const exerciseList = exercises.map(exercise => ({
+        id: exercise._id,
+        title: exercise.title
+      }));
+      resolve({ exercises: exerciseList });
     } catch (err) {
-      reject(err);
+      reject({ status: 500, message: err.message });
     }
   });
 }
+

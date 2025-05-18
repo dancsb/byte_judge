@@ -806,11 +806,8 @@ components:
       required:
       - exerciseId
       - sourceCode
-      - userId
       type: object
       properties:
-        userId:
-          type: string
         exerciseId:
           type: string
         sourceCode:
@@ -836,14 +833,14 @@ components:
             $ref: '#/components/schemas/inline_response_200_3_results'
       example:
         results:
-        - input: input
+        - output: output
+          input: input
           actual: actual
-          expected: expected
           passed: true
           error: error
-        - input: input
+        - output: output
+          input: input
           actual: actual
-          expected: expected
           passed: true
           error: error
         status: status
@@ -865,11 +862,11 @@ components:
       properties:
         input:
           type: string
-        expected:
+        output:
           type: string
       example:
+        output: output
         input: input
-        expected: expected
     exercise_body:
       required:
       - description
@@ -916,10 +913,10 @@ components:
       example:
         timeLimit: 0.80082819046101150206595775671303272247314453125
         testCases:
-        - input: input
-          expected: expected
-        - input: input
-          expected: expected
+        - output: output
+          input: input
+        - output: output
+          input: input
         memoryLimitMB: 6.02745618307040320615897144307382404804229736328125
         description: description
         id: id
@@ -929,7 +926,7 @@ components:
       properties:
         input:
           type: string
-        expected:
+        output:
           type: string
         actual:
           type: string
@@ -938,9 +935,9 @@ components:
         error:
           type: string
       example:
+        output: output
         input: input
         actual: actual
-        expected: expected
         passed: true
         error: error
   securitySchemes:

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Compile the code
 gcc main.c -o main.out 2> compile_error.txt

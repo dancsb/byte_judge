@@ -1,6 +1,5 @@
 const PQueue = require('p-queue').default;
 const runSubmission = require('./runner');
-const Submission = require('./models/Submission');
 
 const concurrency = process.env.MAX_CONTAINERS || 3;
 const queue = new PQueue({ concurrency });
@@ -19,6 +18,7 @@ async function enqueueSubmission(submission) {
       submission.results = results;
     } catch (err) {
       submission.status = 'ERROR';
+      console.error('Error running submission:', err);
     }
 
     await submission.save();

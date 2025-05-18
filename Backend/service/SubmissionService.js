@@ -1,7 +1,7 @@
 'use strict';
 
 const Submission = require('../models/Submission');
-const enqueueSubmission = require('../queue');
+const enqueueSubmission = require('../utils/queue');
 
 /**
  * Get submission status and results
@@ -13,19 +13,20 @@ const enqueueSubmission = require('../queue');
 exports.getSubmissionStatus = function(id) {
   return new Promise(async function(resolve, reject) {
     try {
-      const submission = await Submission.findById(id);
+      const submission = await Submission.findById({ _id: id });
       if (!submission) {
-        return reject({ message: 'Submission not found' });
+        return reject({ status: 404, message: 'Submission not found' });
       }
       resolve({
         status: submission.status,
         results: submission.status === 'DONE' ? submission.results : null
       });
     } catch (err) {
-      reject(err);
+      reject({ status: 500, message: err.message });
     }
   });
 }
+
 
 /**
  * Submit a new code solution
@@ -43,7 +44,8 @@ exports.submitSolution = function(body) {
       await enqueueSubmission(submission);
       resolve({ message: 'Submission received', submissionId: submission._id });
     } catch (err) {
-      reject(err);
+      reject({ status: 500, message: err.message });
     }
   });
 }
+
