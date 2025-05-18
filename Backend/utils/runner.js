@@ -41,17 +41,42 @@ module.exports = async function runSubmission(submission) {
   stream.on('data', chunk => output += chunk.toString());
   await container.wait();
 
+  if (output.includes('COMPILATION_ERROR')) {
+    const compilationError = output.split('COMPILATION_ERROR')[1].trim();
+    return { compilationError };
+  }
+
   const results = [];
   exercise.testCases.forEach((testCase, i) => {
     const outPath = path.join(submissionPath, 'outputs', `t${i}.txt`);
     const userOutput = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8').trim() : '';
-    results.push({
-      input: testCase.input,
-      expected: testCase.output,
-      actual: userOutput,
-      passed: userOutput === testCase.output.trim()
-    });
+    const timeUsed = parseFloat(output.match(new RegExp(`TIME:(\\d+\\.\\d+)`, 'g'))[i].split(':')[1]);
+    const memoryUsed = parseInt(output.match(new RegExp(`MEM:(\\d+)`, 'g'))[i].split(':')[1]);
+
+    if (output.includes(`RUNTIME_ERROR:t${i}`)) {
+      const runtimeError = output.split(`RUNTIME_ERROR:t${i}`)[1].trim();
+      results.push({
+        input: testCase.input,
+        expected: testCase.output,
+        actual: userOutput,
+        passed: false,
+        runtimeError,
+        timeUsed,
+        memoryUsed
+      });
+    } else {
+      results.push({
+        input: testCase.input,
+        expected: testCase.output,
+        actual: userOutput,
+        passed: userOutput === testCase.output.trim(),
+        timeUsed,
+        memoryUsed
+      });
+    }
   });
 
-  return results;
+  fs.rmSync(submissionPath, { recursive: true, force: true });
+
+  return { results };
 };

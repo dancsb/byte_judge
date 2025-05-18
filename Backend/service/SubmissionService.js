@@ -44,8 +44,7 @@ exports.submitSolution = function(body) {
       await enqueueSubmission(submission);
       resolve({ message: 'Submission received', submissionId: submission._id });
     } catch (err) {
-      reject({ status: 500, message: err.message });
+      reject({ status: 500, message: 'Internal server error' });
     }
   });
 }
-
