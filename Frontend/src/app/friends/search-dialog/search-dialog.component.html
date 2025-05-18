@@ -1,0 +1,32 @@
+<mat-card>
+    <div class="search-container">
+        <mat-card-title>
+            <div class="title-with-button">
+                Search for friends
+                <div class="button-container">
+                    <button class="close-button" mat-button color="primary" (click)="onClose()">Close</button>
+                </div>
+            </div>
+        </mat-card-title>
+        <mat-form-field appearance="outline" class="search-bar">
+        <mat-label>Search</mat-label>
+        <input matInput [(ngModel)]="searchQuery" (input)="onSearch(searchQuery)" />
+        <button mat-icon-button matSuffix *ngIf="searchQuery" (click)="searchQuery=''; onXButton()">
+            <mat-icon>close</mat-icon>
+        </button>
+        </mat-form-field>
+        <mat-list *ngIf="searchResults.length > 0; else noResults">
+        <mat-list-item *ngFor="let result of searchResults">
+            <div class="item-container">
+                <span>{{ result.username }}</span>
+                <button mat-icon-button color="primary" aria-label="Add Friend" (click)="onAdd(result.id)">
+                    <mat-icon>person_add</mat-icon>
+                </button>
+            </div>
+        </mat-list-item>
+        </mat-list>
+        <ng-template #noResults>
+            No results found.
+        </ng-template>
+    </div>
+</mat-card>

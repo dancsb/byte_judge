@@ -1,0 +1,30 @@
+<mat-card class="friends-list-container">
+    <mat-card-title class="title-with-button">
+      <div class="title">
+        Friends List
+        <div class="friend-list-buttons">
+          <button class="add-button" mat-icon-button color="primary" (click)="onAddFriend()">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button class="requests-button" mat-icon-button [matBadge]="this.friendRequestsNumber" color="primary" (click)="onListRequests()">
+            <mat-icon>inbox_text</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card-title>
+    <mat-list>
+      <mat-list-item *ngFor="let friend of friends">
+        <div class="item-container">
+          <div class="user-icon-container">
+            <mat-icon class="user-icon" matListIcon>account_circle</mat-icon>
+            <span>{{ friend.username }}</span>
+          </div>
+          <div class="delete-button-container">
+            <button class="remove-friend-button" mat-icon-button aria-label="removeFriend" (click)="onRemoveFriend(friend.id)">
+              <mat-icon class="delete-icon">delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-list-item>
+    </mat-list>
+</mat-card>

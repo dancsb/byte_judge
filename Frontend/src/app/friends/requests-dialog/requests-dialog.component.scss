@@ -1,0 +1,33 @@
+mat-card {
+    width: 100%;
+    height: 100%;
+    display: flex;
+
+}
+
+.list-container {
+    margin: 16px;
+}
+
+.item-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.title-with-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.friend-list-buttons {
+    display: flex;
+    gap: 10px;
+}

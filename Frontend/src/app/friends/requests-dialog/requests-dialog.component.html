@@ -1,0 +1,30 @@
+<mat-card>
+    <div class="list-container">
+        <mat-card-title >
+            <div class="title-with-button">
+                Friend Requests
+                <div class="friend-list-buttons">
+                    <button class="close-button" mat-button color="primary" (click)="onClose()">Close</button>
+                </div>
+            </div>
+        </mat-card-title>
+        <mat-list *ngIf="data.users.length > 0; else noResults">
+        <mat-list-item *ngFor="let result of data.users">
+            <div class="item-container">
+                <span>{{ result.username }}</span>
+                <div class="buttons">
+                    <button mat-icon-button color="primary" aria-label="Add Friend" (click)="onAccept(result.id)">
+                        <mat-icon>check</mat-icon>
+                    </button>
+                    <button mat-icon-button color="primary" aria-label="Add Friend" (click)="onReject(result.id)">
+                        <mat-icon>close</mat-icon>
+                    </button>   
+                </div>
+            </div>
+        </mat-list-item>
+        </mat-list>
+        <ng-template #noResults>
+            No friend requests found.
+        </ng-template>
+    </div>
+</mat-card>

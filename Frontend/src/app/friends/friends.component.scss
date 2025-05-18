@@ -1,0 +1,72 @@
+.friends-list-container {
+    max-width: 500px;
+    max-height: 500px;
+    margin: 20px auto;
+    padding: 16px;
+    overflow: auto;
+}
+
+mat-card-title {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+mat-list-item {
+  display: flex;
+  align-items: center; /* Vertically center items inside */
+  justify-content: space-between;
+}
+.user-icon {
+  margin-right: 16px;
+}
+
+.delete-icon {
+  text-align: center;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.add-button {
+  margin-left: auto;
+  border-radius: 8px;
+}
+
+.add-button:hover {
+  transform: scale(1.1);
+}
+
+.remove-friend-button {
+  margin-left: 16px;
+  border-radius: 8px;
+}
+
+.remove-friend-button:hover {
+  transform: scale(1.1);
+}
+
+span {
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.item-container {
+  display: flex;
+  align-items: center; /* Vertically center items inside */
+  justify-content: space-between;
+}
+
+.user-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.remove-friend-button {
+  display: flex;
+  gap: 15px;
+}

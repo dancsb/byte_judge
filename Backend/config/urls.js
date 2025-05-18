@@ -8,5 +8,5 @@ module.exports = {
         ? 'http://localhost:8080'
         : process.env.RUN_CONFIG === 'production'
             ? 'https://api.bytejudge.dancs.org'
-            : 'http://localhost:4080'
+            : 'http://localhost:8080'
 };

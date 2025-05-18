@@ -1,0 +1,46 @@
+.search-bar {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+mat-card {
+    width: 100%;
+    height: 100%;
+}
+
+.search-container {
+    margin: 16px;
+}
+
+.title-with-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
+mat-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    margin-top: 4px;
+}
+
+.item-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+}
