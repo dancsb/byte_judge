@@ -19,8 +19,17 @@ for file in inputs/*.txt; do
 
   # Time + memory monitoring + timeout
   /usr/bin/time -f "\nTIME:%e\nMEM:%M" timeout "$TIME_LIMIT" ./main.out < "$file" > "$out_file" 2> "$err_file"
+  RESULT=$?
+  
+  # Read time and memory from error file and output it to stdout
+  if grep -q "TIME:" "$err_file"; then
+    TIME_INFO=$(grep "TIME:" "$err_file")
+    MEM_INFO=$(grep "MEM:" "$err_file")
+    echo "$TIME_INFO"
+    echo "$MEM_INFO"
+  fi
 
-  if [ $? -ne 0 ]; then
+  if [ $RESULT -ne 0 ]; then
     echo "RUNTIME_ERROR:$name"
     cat "$err_file"
   else

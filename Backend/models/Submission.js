@@ -5,9 +5,9 @@ const ResultSchema = new mongoose.Schema({
   expected: String,
   actual: String,
   passed: Boolean,
-  error: String,
   timeUsed: Number,
-  memoryUsed: Number
+  memoryUsed: Number,
+  runtimeError: String
 });
 
 const SubmissionSchema = new mongoose.Schema({
@@ -17,8 +17,7 @@ const SubmissionSchema = new mongoose.Schema({
   status: { type: String, enum: ['QUEUED', 'RUNNING', 'DONE', 'ERROR'], default: 'QUEUED' },
   results: [ResultSchema],
   createdAt: { type: Date, default: Date.now },
-  compilationError: String,
-  runtimeError: String
+  compilationError: String
 });
 
 module.exports = mongoose.model('Submission', SubmissionSchema);

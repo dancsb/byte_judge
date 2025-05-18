@@ -40,6 +40,7 @@ module.exports = async function runSubmission(submission) {
   let output = '';
   stream.on('data', chunk => output += chunk.toString());
   await container.wait();
+  console.log(output);
 
   if (output.includes('COMPILATION_ERROR')) {
     const compilationError = output.split('COMPILATION_ERROR')[1].trim();
@@ -60,7 +61,7 @@ module.exports = async function runSubmission(submission) {
         expected: testCase.output,
         actual: userOutput,
         passed: false,
-        error: runtimeError,
+        runtimeError,
         timeUsed,
         memoryUsed
       });
@@ -76,7 +77,7 @@ module.exports = async function runSubmission(submission) {
     }
   });
 
-  fs.rmdirSync(submissionPath, { recursive: true });
+  fs.rmSync(submissionPath, { recursive: true, force: true });
 
   return { results };
 };

@@ -13,11 +13,19 @@ async function enqueueSubmission(submission) {
     await submission.save();
 
     try {
-      const results = await runSubmission(submission);
-      submission.status = 'DONE';
-      submission.results = results;
+      const result = await runSubmission(submission);
+      if (result.compilationError) {
+        submission.status = 'ERROR';
+        submission.compilationError = result.compilationError;
+        submission.results = [];
+      } else {
+        submission.status = 'DONE';
+        submission.results = result.results;
+        submission.compilationError = undefined;
+      }
     } catch (err) {
       submission.status = 'ERROR';
+      submission.runtimeError = err.message;
       console.error('Error running submission:', err);
     }
 
