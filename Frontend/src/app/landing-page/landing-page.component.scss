@@ -58,3 +58,51 @@
   height: 50%;
   z-index: 1000;
 }
+
+.exercise-list {
+  margin: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.exercise-item {
+  margin: 0 0 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.exercise-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.exercise-item h3 {
+  margin: 0 0 10px;
+  color: #333;
+}
+
+.exercise-item p {
+  margin: 0 0 10px;
+  color: #666;
+}
+
+.exercise-limits {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  color: #999;
+}
+
+.exercise-link {
+  text-decoration: none;
+  color: inherit; /* Optional: Use this to inherit the text color */
+}
+
+.exercise-link:hover {
+  text-decoration: none; /* Explicitly remove underline on hover */
+}

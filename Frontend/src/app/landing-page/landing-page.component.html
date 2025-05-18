@@ -2,3 +2,19 @@
  <div>
   <app-navbar></app-navbar>
 </div>
+
+<div class="exercise-list">
+  <h2>Available Exercises</h2>
+  <ul>
+    <li *ngFor="let exercise of exercises" class="exercise-item">
+      <a [routerLink]="['/exercise-details', exercise.id]" class="exercise-link">
+        <h3>{{ exercise.title }}</h3>
+        <p>{{ exercise.description }}</p>
+        <div class="exercise-limits">
+          <span>Time Limit: {{ exercise.timeLimit }} seconds</span>
+          <span>Memory Limit: {{ exercise.memoryLimitKB }} KB</span>
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>

@@ -56,6 +56,8 @@ exports.getExercise = function(id) {
         id: exercise._id,
         title: exercise.title,
         description: exercise.description,
+        timeLimit: exercise.timeLimit,
+        memoryLimitKB: exercise.memoryLimitKB,
         testCases: exercise.testCases.slice(0, 2).map(testCase => ({
           input: testCase.input,
           output: testCase.output
@@ -79,7 +81,10 @@ exports.listExercises = function() {
       const exercises = await Exercise.find({});
       const exerciseList = exercises.map(exercise => ({
         id: exercise._id,
-        title: exercise.title
+        title: exercise.title,
+        description: exercise.description,
+        timeLimit: exercise.timeLimit,
+        memoryLimitKB: exercise.memoryLimitKB
       }));
       resolve({ exercises: exerciseList });
     } catch (err) {

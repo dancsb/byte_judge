@@ -1,0 +1,42 @@
+<!-- Full-width top bar -->
+ <div>
+  <app-navbar></app-navbar>
+</div>
+
+<div class="exercise-details" *ngIf="exercise">
+  <h2>{{ exercise.title }}</h2>
+  <p>{{ exercise.description }}</p>
+  <div class="exercise-limits">
+    <span>Time Limit: {{ exercise.timeLimit }} seconds</span>
+    <span>Memory Limit: {{ exercise.memoryLimitKB }} KB</span>
+  </div>
+  <h3>Test Cases</h3>
+  <ul>
+    <li *ngFor="let testCase of exercise.testCases">
+      <strong>Input:</strong> {{ testCase.input }}<br>
+      <strong>Output:</strong> {{ testCase.output }}
+    </li>
+  </ul>
+</div>
+
+<div class="submission-form">
+  <h3>Submit Your Solution</h3>
+  <div class="form-group">
+    <label>Programming Language:</label>
+    <div class="radio-group">
+      <label>
+        <input type="radio" formControlName="language" value="C" name="language" checked /> C
+      </label>
+      <label>
+        <input type="radio" formControlName="language" value="Python" name="language" /> Python
+      </label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="file">Upload File:</label>
+    <input type="file" id="file" (change)="onFileChange($event)" class="form-control" />
+  </div>
+
+  <button (click)="submitSolution()" class="btn btn-primary">Submit</button>
+</div>
