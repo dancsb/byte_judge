@@ -19,7 +19,9 @@ exports.getSubmissionStatus = function(id) {
       }
       resolve({
         status: submission.status,
-        results: submission.status === 'DONE' ? submission.results : null
+        results: submission.status === 'DONE' ? submission.results : null,
+        compilationError: submission.compilationError,
+        runtimeError: submission.runtimeError
       });
     } catch (err) {
       reject({ status: 500, message: err.message });
@@ -44,8 +46,17 @@ exports.submitSolution = function(body) {
       await enqueueSubmission(submission);
       resolve({ message: 'Submission received', submissionId: submission._id });
     } catch (err) {
-      reject({ status: 500, message: err.message });
+      if (err.message.includes('COMPILATION_ERROR')) {
+        const submission = new Submission({ userId, exerciseId, sourceCode, compilationError: err.message });
+        await submission.save();
+        return reject({ status: 400, message: 'Compilation error', submissionId: submission._id });
+      } else if (err.message.includes('RUNTIME_ERROR')) {
+        const submission = new Submission({ userId, exerciseId, sourceCode, runtimeError: err.message });
+        await submission.save();
+        return reject({ status: 400, message: 'Runtime error', submissionId: submission._id });
+      } else {
+        reject({ status: 500, message: err.message });
+      }
     }
   });
 }
-
