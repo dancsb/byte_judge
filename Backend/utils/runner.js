@@ -40,7 +40,6 @@ module.exports = async function runSubmission(submission) {
   let output = '';
   stream.on('data', chunk => output += chunk.toString());
   await container.wait();
-  console.log(output);
 
   if (output.includes('COMPILATION_ERROR')) {
     const compilationError = output.split('COMPILATION_ERROR')[1].trim();

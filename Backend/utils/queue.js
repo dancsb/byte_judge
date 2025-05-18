@@ -21,11 +21,9 @@ async function enqueueSubmission(submission) {
       } else {
         submission.status = 'DONE';
         submission.results = result.results;
-        submission.compilationError = undefined;
       }
     } catch (err) {
       submission.status = 'ERROR';
-      submission.runtimeError = err.message;
       console.error('Error running submission:', err);
     }
 
