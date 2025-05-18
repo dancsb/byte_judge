@@ -4,7 +4,7 @@ const ResultSchema = new mongoose.Schema({
   input: String,
   expected: String,
   actual: String,
-  passed: Boolean,
+  status: { type: String, enum: ['PASSED', 'FAILED', 'RUNTIME_ERROR', 'TIME_LIMIT_EXCEEDED', 'MEMORY_LIMIT_EXCEEDED'], required: true },
   timeUsed: Number,
   memoryUsed: Number,
   runtimeError: String

@@ -10,7 +10,7 @@ const ExerciseSchema = new mongoose.Schema({
   description: String,
   testCases: [TestCaseSchema],
   timeLimit: Number,
-  memoryLimitMB: Number
+  memoryLimitKB: Number
 });
 
 module.exports = mongoose.model('Exercise', ExerciseSchema);

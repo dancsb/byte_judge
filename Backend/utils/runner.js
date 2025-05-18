@@ -27,7 +27,7 @@ module.exports = async function runSubmission(submission) {
     Env: [`TIME_LIMIT=${exercise.timeLimit}s`],
     HostConfig: {
       Binds: [`${submissionPath}:/app`],
-      Memory: exercise.memoryLimitMB * 1024 * 1024,
+      Memory: 100 * 1024 * 1024,
       CpuShares: 128,
       NetworkMode: 'none',
       AutoRemove: true
@@ -50,30 +50,42 @@ module.exports = async function runSubmission(submission) {
   exercise.testCases.forEach((testCase, i) => {
     const outPath = path.join(submissionPath, 'outputs', `t${i}.txt`);
     const userOutput = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8').trim() : '';
-    const timeUsed = parseFloat(output.match(new RegExp(`TIME:(\\d+\\.\\d+)`, 'g'))[i].split(':')[1]);
-    const memoryUsed = parseInt(output.match(new RegExp(`MEM:(\\d+)`, 'g'))[i].split(':')[1]);
+    const timeUsed = parseFloat(output.match(new RegExp(`TIME:(\\d+\\.\\d+)`, 'g'))[i]?.split(':')[1] || 0);
+    const memoryUsed = parseInt(output.match(new RegExp(`MEM:(\\d+)`, 'g'))[i]?.split(':')[1] || 0);
+
+    let status;
+    let runtimeError = null;
 
     if (output.includes(`RUNTIME_ERROR:t${i}`)) {
-      const runtimeError = output.split(`RUNTIME_ERROR:t${i}`)[1].trim();
-      results.push({
-        input: testCase.input,
-        expected: testCase.output,
-        actual: userOutput,
-        passed: false,
-        runtimeError,
-        timeUsed,
-        memoryUsed
-      });
+      status = 'RUNTIME_ERROR';
+      runtimeError = output.split(`RUNTIME_ERROR:t${i}`)[1]?.trim();
+    } else if (output.includes(`TIME_LIMIT_EXCEEDED:t${i}`)) {
+      status = 'TIME_LIMIT_EXCEEDED';
+    } else if (output.includes(`MEMORY_LIMIT_EXCEEDED:t${i}`)) {
+      status = 'MEMORY_LIMIT_EXCEEDED';
+    } 
+    
+    else if (userOutput === testCase.output.trim()) {
+      if (timeUsed > exercise.timeLimit) {
+        status = 'TIME_LIMIT_EXCEEDED';
+      } else if (memoryUsed > exercise.memoryLimitKB * 1024) {
+        status = 'MEMORY_LIMIT_EXCEEDED';
+      } else {
+        status = 'PASSED';
+      }
     } else {
-      results.push({
-        input: testCase.input,
-        expected: testCase.output,
-        actual: userOutput,
-        passed: userOutput === testCase.output.trim(),
-        timeUsed,
-        memoryUsed
-      });
+      status = 'FAILED';
     }
+
+    results.push({
+      input: testCase.input,
+      expected: testCase.output,
+      actual: userOutput,
+      status,
+      timeUsed,
+      memoryUsed,
+      runtimeError
+    });
   });
 
   fs.rmSync(submissionPath, { recursive: true, force: true });

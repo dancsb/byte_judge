@@ -29,7 +29,11 @@ for file in inputs/*.txt; do
     echo "$MEM_INFO"
   fi
 
-  if [ $RESULT -ne 0 ]; then
+  if [ $RESULT -eq 124 ]; then
+    echo "TIME_LIMIT_EXCEEDED:$name"
+  elif [ $RESULT -eq 137 ]; then
+    echo "MEMORY_LIMIT_EXCEEDED:$name"
+  elif [ $RESULT -ne 0 ]; then
     echo "RUNTIME_ERROR:$name"
     cat "$err_file"
   else

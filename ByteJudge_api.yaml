@@ -679,7 +679,7 @@ paths:
                         type: string
                 timeLimit:
                   type: number
-                memoryLimitMB:
+                memoryLimitKB:
                   type: number
               required:
                 - title
@@ -732,7 +732,7 @@ paths:
                           type: string
                   timeLimit:
                     type: number
-                  memoryLimitMB:
+                  memoryLimitKB:
                     type: number
         "404":
           description: Exercise not found

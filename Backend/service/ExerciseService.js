@@ -11,7 +11,7 @@ const Exercise = require('../models/Exercise');
 exports.createExercise = function(body) {
   return new Promise(async function(resolve, reject) {
     try {
-      const { title, description, testCases, timeLimit, memoryLimitMB } = body;
+      const { title, description, testCases, timeLimit, memoryLimitKB } = body;
 
       if (!testCases || testCases.length < 2) {
         return reject({ status: 400, message: 'At least 2 input-output pairs are required' });
@@ -27,7 +27,7 @@ exports.createExercise = function(body) {
         description,
         testCases: formattedTestCases,
         timeLimit,
-        memoryLimitMB,
+        memoryLimitKB,
       });
 
       await newExercise.save();

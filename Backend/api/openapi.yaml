@@ -884,7 +884,7 @@ components:
             $ref: '#/components/schemas/exercise_testCases'
         timeLimit:
           type: number
-        memoryLimitMB:
+        memoryLimitKB:
           type: number
     inline_response_201_1:
       type: object
@@ -908,7 +908,7 @@ components:
             $ref: '#/components/schemas/exercise_testCases'
         timeLimit:
           type: number
-        memoryLimitMB:
+        memoryLimitKB:
           type: number
       example:
         timeLimit: 0.80082819046101150206595775671303272247314453125
@@ -917,7 +917,7 @@ components:
           input: input
         - output: output
           input: input
-        memoryLimitMB: 6.02745618307040320615897144307382404804229736328125
+        memoryLimitKB: 6.02745618307040320615897144307382404804229736328125
         description: description
         id: id
         title: title
