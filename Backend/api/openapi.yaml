@@ -1,0 +1,952 @@
+openapi: 3.0.0
+info:
+  title: ByteJudge API
+  description: This is ithe backend API for the ByteJudge app.
+  termsOfService: http://bytejudge.dancs.org/tos/
+  contact:
+    email: apiteam@bytejudge.dancs.org
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+- url: http://localhost:4080
+tags:
+- name: Authentication
+  description: User Authentication
+- name: User
+  description: Operations about user
+- name: Friends
+  description: Friends management operations
+- name: Exercise
+  description: Manage programming exercises
+- name: Submission
+  description: Submit and review code evaluations
+paths:
+  /auth/login:
+    post:
+      tags:
+      - Authentication
+      summary: User login and JWT token issuance
+      description: Authenticates the user and returns a JWT token if credentials are
+        correct.
+      operationId: userLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_login_body'
+        required: true
+      responses:
+        "200":
+          description: Successful login and JWT token issued
+          headers:
+            Authorization:
+              description: JWT token for authentication in future requests
+              style: simple
+              explode: false
+              schema:
+                type: string
+                example: Bearer your.jwt.token
+        "401":
+          description: Unauthorized. Incorrect email or password.
+        "400":
+          description: Bad Request. Missing or invalid parameters.
+      x-swagger-router-controller: Authentication
+  /auth/logout:
+    post:
+      tags:
+      - Authentication
+      summary: Logout user
+      description: Invalidate the current session
+      operationId: userLogout
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: Authentication
+  /user:
+    get:
+      tags:
+      - User
+      summary: Get leggoed in user
+      description: Returns the details of the authenticated user.
+      operationId: userGet
+      responses:
+        "200":
+          description: User details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "401":
+          description: Unauthorized. User is not logged in.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: User
+    put:
+      tags:
+      - User
+      summary: Update user account
+      description: Updates the details of an existing user.
+      operationId: userUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_body'
+        required: true
+      responses:
+        "200":
+          description: User updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+              example:
+                message: User updated successfully.
+        "404":
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: User
+    post:
+      tags:
+      - User
+      summary: Create a new user
+      description: Creates a new user account and sends a confirmation email.
+      operationId: userCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_body_1'
+        required: true
+      responses:
+        "201":
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+              example:
+                id: "123456"
+                message: User created successfully. Please check your email to activate
+                  your account.
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-swagger-router-controller: User
+    delete:
+      tags:
+      - User
+      summary: Delete user account
+      description: Deletes a user account based on the userid.
+      operationId: userDelete
+      responses:
+        "200":
+          description: User deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+              example:
+                message: User deleted successfully.
+        "404":
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: User
+  /user/{userId}:
+    get:
+      tags:
+      - User
+      summary: Get user by Id
+      description: Returns the details of a user.
+      operationId: userGetById
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user to query
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: User details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "401":
+          description: Unauthorized. User is not logged in.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: User
+  /user_search:
+    get:
+      tags:
+      - User
+      summary: Search users by partial username match
+      description: Lists all users whose username partially matches the search term
+      operationId: userSearch
+      parameters:
+      - name: username
+        in: query
+        description: Partial or complete username to search for
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: List of matching users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: User
+  /user/change_password:
+    put:
+      tags:
+      - User
+      summary: Change user password
+      description: Cahnges the password of an existing user.
+      operationId: userChangePassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_change_password_body'
+        required: true
+      responses:
+        "200":
+          description: Password changed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+              example:
+                message: Password changed successfully.
+        "404":
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthorized. Incorrect old password.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: User
+  /user/email_confirm:
+    post:
+      tags:
+      - User
+      summary: Confirm user email address
+      description: Confirms a user email address based on a token sent via email.
+      operationId: emailConfirm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_email_confirm_body'
+        required: true
+      responses:
+        "200":
+          description: User account confirmed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+              example:
+                message: Account confirmed successfully.
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-swagger-router-controller: User
+  /friends/request/{userId}:
+    post:
+      tags:
+      - Friends
+      summary: Send friend request
+      description: Send a friend request to another user
+      operationId: sendFriendRequest
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user to send friend request to
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Friend request sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequest'
+        "400":
+          description: "Invalid request (e.g., trying to friend yourself)"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: Friend request already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: Friends
+  /friends/requests/ingoing:
+    get:
+      tags:
+      - Friends
+      summary: Get incoming friend requests
+      description: Get list of users who sent friend requests to the authenticated
+        user
+      operationId: getFriendRequestsIngoing
+      responses:
+        "200":
+          description: List of pending friend requests retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: Friends
+  /friends/requests/outgoing:
+    get:
+      tags:
+      - Friends
+      summary: Get incoming friend requests
+      description: Get list of users who is recived friend requests from the authenticated
+        user
+      operationId: getFriendRequestsOutgoing
+      responses:
+        "200":
+          description: List of pending friend requests retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: Friends
+  /friends/request/{userId}/accept:
+    put:
+      tags:
+      - Friends
+      summary: Accept friend request
+      description: Accept a pending friend request from specific user
+      operationId: acceptFriendRequest
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user whose friend request to accept
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Friend request accepted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Friend'
+        "403":
+          description: Not authorized to accept this request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Friend request not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: Friends
+  /friends/request/{userId}/reject:
+    put:
+      tags:
+      - Friends
+      summary: Reject friend request
+      description: Reject a pending friend request from specific user
+      operationId: rejectFriendRequest
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user whose friend request to reject
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Friend request rejected successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Friend'
+        "403":
+          description: Not authorized to reject this request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Friend request not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: Friends
+  /friends:
+    get:
+      tags:
+      - Friends
+      summary: Get friend list
+      description: Get list of all confirmed friends for the authenticated user
+      operationId: getFriendList
+      responses:
+        "200":
+          description: Friend list retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserList'
+                x-content-type: application/json
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: Friends
+  /friends/{userId}:
+    delete:
+      tags:
+      - Friends
+      summary: Remove friend
+      description: Remove a user from friends list
+      operationId: deleteFriend
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the friend to remove
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Friend removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+        "404":
+          description: Friendship not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - jwtCookieAuth: []
+      x-swagger-router-controller: Friends
+  /submission:
+    post:
+      tags:
+      - Submission
+      summary: Submit a new code solution
+      description: "Accepts userId, exerciseId, and sourceCode. Queues the submission\
+        \ for evaluation."
+      operationId: submitSolution
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/submission_body'
+        required: true
+      responses:
+        "202":
+          description: Submission accepted and queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_202'
+      x-swagger-router-controller: Submission
+  /submission/{id}:
+    get:
+      tags:
+      - Submission
+      summary: Get submission status and results
+      description: Returns the evaluation status and results (if available)
+      operationId: getSubmissionStatus
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Submission found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        "404":
+          description: Submission not found
+      x-swagger-router-controller: Submission
+  /exercise:
+    get:
+      tags:
+      - Exercise
+      summary: List all exercises
+      operationId: listExercises
+      responses:
+        "200":
+          description: List of exercises
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/inline_response_200_4'
+                x-content-type: application/json
+      x-swagger-router-controller: Exercise
+    post:
+      tags:
+      - Exercise
+      summary: Create a new exercise
+      operationId: createExercise
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/exercise_body'
+        required: true
+      responses:
+        "201":
+          description: Exercise created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201_1'
+      x-swagger-router-controller: Exercise
+  /exercise/{id}:
+    get:
+      tags:
+      - Exercise
+      summary: Get details of a single exercise
+      operationId: getExercise
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Exercise details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_5'
+        "404":
+          description: Exercise not found
+      x-swagger-router-controller: Exercise
+components:
+  schemas:
+    Error:
+      required:
+      - error
+      - message
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      example:
+        error: BadRequest
+        message: Invalid input provided.
+    User:
+      required:
+      - email
+      - id
+      - username
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        id: id
+        email: ""
+        username: username
+    FriendRequest:
+      required:
+      - accepted
+      - id
+      - received
+      - sent
+      type: object
+      properties:
+        id:
+          type: string
+        sent:
+          type: string
+          description: User ID of the sender
+        received:
+          type: string
+          description: User ID of the receiver
+        accepted:
+          type: boolean
+          default: false
+      example:
+        id: "12345"
+        sent: user123
+        received: user456
+        accepted: false
+    Friend:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: Action succesful
+    UserList:
+      required:
+      - users
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+      example:
+        users:
+        - id: "123"
+          username: john_doe
+          email: john@example.com
+          createdAt: 2024-01-01T10:00:00Z
+        - id: "124"
+          username: johnny
+          email: johnny@example.com
+          createdAt: 2024-02-01T11:00:00Z
+    auth_login_body:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+          description: The email address of the user
+          format: email
+        password:
+          type: string
+          description: The password for the user
+          format: password
+    inline_response_200:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: Successfully logged out
+    user_body:
+      required:
+      - email
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+    inline_response_200_1:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: message
+    user_body_1:
+      required:
+      - email
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    inline_response_201:
+      type: object
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+      example:
+        id: id
+        message: message
+    user_change_password_body:
+      required:
+      - newPassword
+      - oldPassword
+      type: object
+      properties:
+        oldPassword:
+          type: string
+          format: password
+        newPassword:
+          type: string
+          format: password
+    user_email_confirm_body:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          type: string
+    inline_response_200_2:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: Friend removed successfully
+    submission_body:
+      required:
+      - exerciseId
+      - sourceCode
+      - userId
+      type: object
+      properties:
+        userId:
+          type: string
+        exerciseId:
+          type: string
+        sourceCode:
+          type: string
+    inline_response_202:
+      type: object
+      properties:
+        submissionId:
+          type: string
+        message:
+          type: string
+      example:
+        submissionId: submissionId
+        message: message
+    inline_response_200_3:
+      type: object
+      properties:
+        status:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/inline_response_200_3_results'
+      example:
+        results:
+        - input: input
+          actual: actual
+          expected: expected
+          passed: true
+          error: error
+        - input: input
+          actual: actual
+          expected: expected
+          passed: true
+          error: error
+        status: status
+    inline_response_200_4:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+      example:
+        description: description
+        id: id
+        title: title
+    exercise_testCases:
+      type: object
+      properties:
+        input:
+          type: string
+        expected:
+          type: string
+      example:
+        input: input
+        expected: expected
+    exercise_body:
+      required:
+      - description
+      - testCases
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        testCases:
+          type: array
+          items:
+            $ref: '#/components/schemas/exercise_testCases'
+        timeLimit:
+          type: number
+        memoryLimitMB:
+          type: number
+    inline_response_201_1:
+      type: object
+      properties:
+        exerciseId:
+          type: string
+      example:
+        exerciseId: exerciseId
+    inline_response_200_5:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        testCases:
+          type: array
+          items:
+            $ref: '#/components/schemas/exercise_testCases'
+        timeLimit:
+          type: number
+        memoryLimitMB:
+          type: number
+      example:
+        timeLimit: 0.80082819046101150206595775671303272247314453125
+        testCases:
+        - input: input
+          expected: expected
+        - input: input
+          expected: expected
+        memoryLimitMB: 6.02745618307040320615897144307382404804229736328125
+        description: description
+        id: id
+        title: title
+    inline_response_200_3_results:
+      type: object
+      properties:
+        input:
+          type: string
+        expected:
+          type: string
+        actual:
+          type: string
+        passed:
+          type: boolean
+        error:
+          type: string
+      example:
+        input: input
+        actual: actual
+        expected: expected
+        passed: true
+        error: error
+  securitySchemes:
+    jwtCookieAuth:
+      type: apiKey
+      description: |
+        JWT token passed via a cookie named `jwt`.  This token is required for accessing secured endpoints.
+      name: jwt
+      in: cookie
