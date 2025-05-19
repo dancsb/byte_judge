@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const app = require('express')();
 var oas3Tools = require('oas3-tools');
-var serverPort = 8080;
+var serverPort = 4080;
 
 const urls = require('./config/urls')
 

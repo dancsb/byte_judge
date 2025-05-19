@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  bytejudge_frontend:
+    build:
+      context: ./Frontend  # Use the Dockerfile from the Frontend folder
+      args:
+        BUILD_CONFIG: testing  # Set the build configuration to 'testing'
+    image: bytejudge_frontend:latest
+    container_name: bytejudge_frontend
+    ports:
+      - "80:4000"
+    depends_on:
+      - bytejudge_backend  # Ensure backend starts before the frontend
+
+  bytejudge_backend:
+    build:
+      context: ./Backend  # Use the Dockerfile from the Backend folder
+    image: bytejudge_backend:latest
+    container_name: bytejudge_backend
+    environment:
+      - RUN_CONFIG=testing  # Set the build configuration to 'testing'
+      - MONGODB_URL=mongodb://mongodb:27017/bytejudge  # MongoDB connection URL
+    ports:
+      - "8080:4080"
+    depends_on:
+      - mongodb  # Ensure MongoDB starts before the backend
+    volumes:
+      - submissions_data:/submissions  # Mount shared volume for submissions
+      - /var/run/docker.sock:/var/run/docker.sock  # Enable dockerode
+
+  mongodb:
+    image: mongo:latest  # Use the latest MongoDB image from Docker Hub
+    container_name: bytejudge_mongo
+    ports:
+      - "27080:27017"
+    volumes:
+      - mongodb_data:/data/db  # Persist MongoDB data across container restarts
+
+volumes:
+  mongodb_data:  # Named volume to persist MongoDB data
+  submissions_data:  # Named volume for shared submissions data
+
+networks:
+  default:
+    name: bytejudge-network  # Custom network name for the services

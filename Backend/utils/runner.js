@@ -8,7 +8,15 @@ const docker = new Docker();
 module.exports = async function runSubmission(submission) {
   const exercise = await Exercise.findById(submission.exerciseId);
   const submissionId = uuidv4();
-  const submissionPath = path.join(__dirname, 'submissions', submissionId);
+
+  let submissionPath;
+  if (process.env.RUN_CONFIG === 'testing' || process.env.RUN_CONFIG === 'production') {
+    submissionPath = path.join('/submissions', submissionId);
+  }
+  else {
+    submissionPath = path.join(__dirname, 'submissions', submissionId);
+  }
+
   fs.mkdirSync(submissionPath, { recursive: true });
 
   const fileName = submission.language === 'Python' ? 'main.py' : 'main.c';
@@ -26,10 +34,10 @@ module.exports = async function runSubmission(submission) {
   const container = await docker.createContainer({
     Image: image,
     Cmd: ['/runner/run.sh'],
-    WorkingDir: '/app',
+    WorkingDir: (process.env.RUN_CONFIG === 'testing' || process.env.RUN_CONFIG === 'production') ? `/app/${submissionId}` : '/app',
     Env: [`TIME_LIMIT=${exercise.timeLimit}s`],
     HostConfig: {
-      Binds: [`${submissionPath}:/app`],
+      Binds: [(process.env.RUN_CONFIG === 'testing' || process.env.RUN_CONFIG === 'production') ? `byte_judge_submissions_data:/app` : `${submissionPath}:/app`],
       Memory: 100 * 1024 * 1024,
       CpuShares: 128,
       NetworkMode: 'none',

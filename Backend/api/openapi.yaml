@@ -13,7 +13,7 @@ externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
 servers:
-- url: http://localhost:8080
+- url: http://localhost:4080
 tags:
 - name: Authentication
   description: User Authentication
