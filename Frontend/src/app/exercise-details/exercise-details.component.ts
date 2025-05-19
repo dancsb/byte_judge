@@ -20,6 +20,8 @@ export class ExerciseDetailsComponent {
   exerciseService: ExerciseService = inject(ExerciseService);
   submissionForm: FormGroup;
   pastSubmissions: any[] = [];
+  selectedSubmission: any = null;
+  showModal: boolean = false;
 
   constructor(private route: ActivatedRoute, private submissionService: SubmissionService, private fb: FormBuilder, private toastr: ToastrService) {
     const exerciseId = this.route.snapshot.paramMap.get('id');
@@ -78,5 +80,19 @@ export class ExerciseDetailsComponent {
     } catch (error) {
       console.error('Submission failed:', error);
     }
+  }
+
+  async viewSubmissionDetails(submissionId: string) {
+    try {
+      this.selectedSubmission = await this.submissionService.getSubmissionById(submissionId);
+      this.showModal = true;
+    } catch (error) {
+      console.error('Failed to load submission details:', error);
+    }
+  }
+
+  closeModal() {
+    this.showModal = false;
+    this.selectedSubmission = null;
   }
 }

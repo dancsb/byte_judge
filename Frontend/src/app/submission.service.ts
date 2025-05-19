@@ -50,4 +50,22 @@ export class SubmissionService {
       });
     });
   }
+
+  async getSubmissionById(submissionId: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.http.get<any>(`${environment.apiUrl}/submission/${submissionId}`, {
+        headers: { 'Content-Type': 'application/json' },
+        observe: 'response',
+        withCredentials: true,
+      }).subscribe({
+        next: (response) => {
+          resolve(response.body);
+        },
+        error: (error) => {
+          console.error('Failed to get submission by ID:', error);
+          reject(null);
+        },
+      });
+    });
+  }
 }

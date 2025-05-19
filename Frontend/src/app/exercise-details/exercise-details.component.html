@@ -44,7 +44,7 @@
 <div class="past-submissions" *ngIf="pastSubmissions.length > 0">
   <h3 class="section-title">Past Submissions</h3>
   <div class="submissions-container">
-    <div class="submission-card" *ngFor="let submission of pastSubmissions; let i = index">
+    <div class="submission-card" *ngFor="let submission of pastSubmissions; let i = index" (click)="viewSubmissionDetails(submission.id)">
       <div class="submission-header">
         <span class="submission-number">#{{ i + 1 }}</span>
         <span class="submission-date">{{ submission.submittedAt | date:'medium' }}</span>
@@ -58,5 +58,37 @@
         <p><strong>Results:</strong> {{ submission.results || 'N/A' }}</p>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Modal for displaying submission details -->
+<div class="modal" *ngIf="showModal">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h3>Submission Details</h3>
+    <p><strong>Status:</strong> {{ selectedSubmission?.status }}</p>
+
+    <div *ngIf="selectedSubmission?.status === 'ERROR'">
+      <p><strong>Compilation Error:</strong></p>
+      <pre>{{ selectedSubmission?.compilationError }}</pre>
+    </div>
+
+    <ul *ngIf="selectedSubmission?.status !== 'ERROR' && selectedSubmission?.results" class="testcase-list">
+      <li *ngFor="let result of selectedSubmission.results; let i = index" class="testcase-item">
+        <div class="testcase-header">
+          <span class="testcase-number">#{{ i + 1 }}</span>
+          <span class="testcase-status" [ngClass]="{
+            'status-passed': result.status === 'PASSED',
+            'status-failed': result.status === 'FAILED',
+            'status-error': result.status === 'RUNTIME_ERROR'
+          }">{{ result.status }}</span>
+        </div>
+        <div class="testcase-details">
+          <p *ngIf="result.runtimeError"><strong>Runtime Error:</strong> {{ result.runtimeError }}</p>
+          <p><strong>Time Used:</strong> {{ result.timeUsed }} ms</p>
+          <p><strong>Memory Used:</strong> {{ result.memoryUsed }} KB</p>
+        </div>
+      </li>
+    </ul>
   </div>
 </div>

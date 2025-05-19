@@ -17,9 +17,18 @@ exports.getSubmissionStatus = function(id) {
       if (!submission) {
         return reject({ status: 404, message: 'Submission not found' });
       }
+
+      const mappedResults = submission.results?.map(result => ({
+        status: result.status,
+        timeUsed: result.timeUsed,
+        memoryUsed: result.memoryUsed,
+        runtimeError: result.runtimeError || null
+      })) || null;
+
       resolve({
         status: submission.status,
-        results: submission.status === 'DONE' ? submission.results : null
+        results: submission.status === 'DONE' ? mappedResults : null,
+        compilationError: submission.compilationError || null
       });
     } catch (err) {
       reject({ status: 500, message: err.message });
