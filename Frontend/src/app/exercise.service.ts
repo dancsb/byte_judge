@@ -45,4 +45,20 @@ export class ExerciseService {
       });
     });
   }
+
+  async createExercise(exercise: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/exercise`, exercise, {
+        headers: { 'Content-Type': 'application/json' },
+        observe: 'response',
+        withCredentials: true,
+      }).subscribe({
+        next: () => resolve(),
+        error: (error) => {
+          console.error('Failed to create exercise:', error);
+          reject(error);
+        },
+      });
+    });
+  }
 }

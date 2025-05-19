@@ -5,7 +5,7 @@
 
 <div class="exercise-details" *ngIf="exercise">
   <h2>{{ exercise.title }}</h2>
-  <p>{{ exercise.description }}</p>
+  <p [innerHTML]="formatDescription(exercise.description)"></p>
   <div class="exercise-limits">
     <span>Time Limit: {{ exercise.timeLimit }} seconds</span>
     <span>Memory Limit: {{ exercise.memoryLimitKB }} KB</span>

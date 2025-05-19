@@ -27,14 +27,22 @@
 .exercise-details ul {
   list-style: none;
   padding: 0;
-}
-
-.exercise-details li {
-  margin-bottom: 10px;
+  max-height: 200px;
+  overflow-y: auto;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  background-color: #fff;
+  background-color: #f9f9f9;
+}
+
+.exercise-details li {
+  max-height: 100px;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
 }
 
 .submission-form {

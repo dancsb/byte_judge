@@ -1,0 +1,90 @@
+/* Add your styles for the create exercise page here */
+.create-exercise {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.create-exercise h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.create-exercise form div {
+  margin-bottom: 20px;
+}
+
+.create-exercise label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+}
+
+.create-exercise input,
+.create-exercise textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s;
+}
+
+.create-exercise input:focus,
+.create-exercise textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.create-exercise button {
+  display: block;
+  margin: 15px auto;
+  padding: 12px 25px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.create-exercise button:hover {
+  background-color: #0056b3;
+}
+
+.create-exercise button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.create-exercise .test-case {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #f7f7f7;
+  margin-bottom: 15px;
+}
+
+.create-exercise .test-case label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.create-exercise .test-case button {
+  margin-top: 10px;
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.create-exercise .test-case button:hover {
+  background-color: #c82333;
+}

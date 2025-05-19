@@ -1,0 +1,45 @@
+<!-- Full-width top bar -->
+ <div>
+  <app-navbar></app-navbar>
+</div>
+
+<div class="create-exercise">
+  <h2>Create New Exercise</h2>
+  <form [formGroup]="exerciseForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="title">Title</label>
+      <input id="title" formControlName="title" type="text" />
+    </div>
+
+    <div>
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description"></textarea>
+    </div>
+
+    <div>
+      <label for="timeLimit">Time Limit (seconds)</label>
+      <input id="timeLimit" formControlName="timeLimit" type="number" step="0.01" />
+    </div>
+
+    <div>
+      <label for="memoryLimitKB">Memory Limit (KB)</label>
+      <input id="memoryLimitKB" formControlName="memoryLimitKB" type="number" />
+    </div>
+
+    <div formArrayName="testCases">
+      <h3>Test Cases</h3>
+      <div *ngFor="let testCase of testCases.controls; let i = index" [formGroupName]="i">
+        <label for="input-{{i}}">Input</label>
+        <textarea id="input-{{i}}" formControlName="input"></textarea>
+
+        <label for="output-{{i}}">Output</label>
+        <textarea id="output-{{i}}" formControlName="output"></textarea>
+
+        <button type="button" (click)="removeTestCase(i)" [disabled]="testCases.length <= 2">Remove</button>
+      </div>
+      <button type="button" (click)="addTestCase()">Add Test Case</button>
+    </div>
+
+    <button type="submit" [disabled]="exerciseForm.invalid">Create Exercise</button>
+  </form>
+</div>

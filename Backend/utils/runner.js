@@ -44,54 +44,56 @@ module.exports = async function runSubmission(submission) {
   stream.on('data', chunk => output += chunk.toString());
   await container.wait();
 
-  if (output.includes('COMPILATION_ERROR')) {
-    const compilationError = output.split('COMPILATION_ERROR')[1].trim();
-    return { compilationError };
-  }
-
-  const results = [];
-  exercise.testCases.forEach((testCase, i) => {
-    const outPath = path.join(submissionPath, 'outputs', `t${i}.txt`);
-    const userOutput = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8').trim() : '';
-    const timeUsed = parseFloat(output.match(new RegExp(`TIME:(\\d+\\.\\d+)`, 'g'))[i]?.split(':')[1] || 0);
-    const memoryUsed = parseInt(output.match(new RegExp(`MEM:(\\d+)`, 'g'))[i]?.split(':')[1] || 0);
-
-    let status;
-    let runtimeError = null;
-
-    if (output.includes(`RUNTIME_ERROR:t${i}`)) {
-      status = 'RUNTIME_ERROR';
-      runtimeError = output.split(`RUNTIME_ERROR:t${i}`)[1]?.trim();
-    } else if (output.includes(`TIME_LIMIT_EXCEEDED:t${i}`)) {
-      status = 'TIME_LIMIT_EXCEEDED';
-    } else if (output.includes(`MEMORY_LIMIT_EXCEEDED:t${i}`)) {
-      status = 'MEMORY_LIMIT_EXCEEDED';
-    } 
-    
-    else if (userOutput === testCase.output.trim()) {
-      if (timeUsed > exercise.timeLimit) {
-        status = 'TIME_LIMIT_EXCEEDED';
-      } else if (memoryUsed > exercise.memoryLimitKB * 1024) {
-        status = 'MEMORY_LIMIT_EXCEEDED';
-      } else {
-        status = 'PASSED';
-      }
-    } else {
-      status = 'FAILED';
+  try {
+    if (output.includes('COMPILATION_ERROR')) {
+      const compilationError = output.split('COMPILATION_ERROR')[1].trim();
+      return { compilationError };
     }
 
-    results.push({
-      input: testCase.input,
-      expected: testCase.output,
-      actual: userOutput,
-      status,
-      timeUsed,
-      memoryUsed,
-      runtimeError
+    const results = [];
+    exercise.testCases.forEach((testCase, i) => {
+      const outPath = path.join(submissionPath, 'outputs', `t${i}.txt`);
+      const userOutput = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8').trim() : '';
+      const timeUsed = parseFloat(output.match(new RegExp(`TIME:(\\d+\\.\\d+)`, 'g'))[i]?.split(':')[1] || 0);
+      const memoryUsed = parseInt(output.match(new RegExp(`MEM:(\\d+)`, 'g'))[i]?.split(':')[1] || 0);
+
+      let status;
+      let runtimeError = null;
+
+      if (output.includes(`RUNTIME_ERROR:t${i}`)) {
+        status = 'RUNTIME_ERROR';
+        runtimeError = output.split(`RUNTIME_ERROR:t${i}`)[1]?.trim();
+      } else if (output.includes(`TIME_LIMIT_EXCEEDED:t${i}`)) {
+        status = 'TIME_LIMIT_EXCEEDED';
+      } else if (output.includes(`MEMORY_LIMIT_EXCEEDED:t${i}`)) {
+        status = 'MEMORY_LIMIT_EXCEEDED';
+      } 
+      
+      else if (userOutput === testCase.output.trim()) {
+        if (timeUsed > exercise.timeLimit) {
+          status = 'TIME_LIMIT_EXCEEDED';
+        } else if (memoryUsed > exercise.memoryLimitKB * 1024) {
+          status = 'MEMORY_LIMIT_EXCEEDED';
+        } else {
+          status = 'PASSED';
+        }
+      } else {
+        status = 'FAILED';
+      }
+
+      results.push({
+        input: testCase.input,
+        expected: testCase.output,
+        actual: userOutput,
+        status,
+        timeUsed,
+        memoryUsed,
+        runtimeError
+      });
     });
-  });
 
-  fs.rmSync(submissionPath, { recursive: true, force: true });
-
-  return { results };
+    return { results };
+  } finally {
+    fs.rmSync(submissionPath, { recursive: true, force: true });
+  }
 };

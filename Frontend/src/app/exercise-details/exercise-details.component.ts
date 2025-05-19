@@ -99,4 +99,8 @@ export class ExerciseDetailsComponent {
     this.showModal = false;
     this.selectedSubmission = null;
   }
+
+  formatDescription(description: string): string {
+    return description.replace(/\n/g, '<br>');
+  }
 }

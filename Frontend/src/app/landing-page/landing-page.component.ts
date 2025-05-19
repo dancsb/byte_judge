@@ -38,4 +38,8 @@ export class LandingPageComponent {
       console.error('Failed to load exercises:', error);
     }
   }
+
+  formatDescription(description: string): string {
+    return description.replace(/\n/g, '<br>');
+  }
 }

@@ -9,7 +9,7 @@
     <li *ngFor="let exercise of exercises" class="exercise-item">
       <a [routerLink]="['/exercise-details', exercise.id]" class="exercise-link">
         <h3>{{ exercise.title }}</h3>
-        <p>{{ exercise.description }}</p>
+        <p [innerHTML]="formatDescription(exercise.description)"></p>
         <div class="exercise-limits">
           <span>Time Limit: {{ exercise.timeLimit }} seconds</span>
           <span>Memory Limit: {{ exercise.memoryLimitKB }} KB</span>
@@ -18,3 +18,5 @@
     </li>
   </ul>
 </div>
+
+<button class="icon-link stylish-button" routerLink="/create-exercise">Create Exercise</button>
