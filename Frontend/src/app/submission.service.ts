@@ -32,4 +32,22 @@ export class SubmissionService {
       });
     });
   }
+
+  async getSubmissionsByExercise(exerciseId: string): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.http.get<any[]>(`${environment.apiUrl}/submissions/${exerciseId}`, {
+        headers: { 'Content-Type': 'application/json' },
+        observe: 'response',
+        withCredentials: true,
+      }).subscribe({
+        next: (response) => {
+          resolve(response.body || []);
+        },
+        error: (error) => {
+          console.error('Failed to get submissions by exercise:', error);
+          reject([]);
+        },
+      });
+    });
+  }
 }

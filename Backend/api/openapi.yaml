@@ -565,6 +565,37 @@ paths:
         "404":
           description: Submission not found
       x-swagger-router-controller: Submission
+  /submissions/{exerciseId}:
+    get:
+      tags:
+      - Submission
+      summary: Get all submissions for a specific exercise by a user
+      description: Returns a list of all submissions for a specific exercise
+      operationId: getSubmissionsByExercise
+      parameters:
+      - name: exerciseId
+        in: path
+        description: The ID of the exercise
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A list of submissions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/inline_response_200_4'
+                x-content-type: application/json
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+      x-swagger-router-controller: Submission
   /exercise:
     get:
       tags:
@@ -579,7 +610,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/inline_response_200_4'
+                  $ref: '#/components/schemas/inline_response_200_5'
                 x-content-type: application/json
       x-swagger-router-controller: Exercise
     post:
@@ -621,7 +652,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_5'
+                $ref: '#/components/schemas/inline_response_200_6'
         "404":
           description: Exercise not found
       x-swagger-router-controller: Exercise
@@ -712,6 +743,33 @@ components:
           username: johnny
           email: johnny@example.com
           createdAt: 2024-02-01T11:00:00Z
+    Submission:
+      required:
+      - exerciseId
+      - id
+      - sourceCode
+      - status
+      - submittedAt
+      - userId
+      type: object
+      properties:
+        id:
+          type: string
+        exerciseId:
+          type: string
+        userId:
+          type: string
+        sourceCode:
+          type: string
+        submittedAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Submission_results'
     auth_login_body:
       required:
       - email
@@ -830,7 +888,7 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/inline_response_200_3_results'
+            $ref: '#/components/schemas/Submission_results'
       example:
         results:
         - output: output
@@ -845,6 +903,24 @@ components:
           error: error
         status: status
     inline_response_200_4:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        submittedAt:
+          type: string
+          format: date-time
+        results:
+          type: string
+          description: "Number of passed test cases out of total, e.g., \"2/5\""
+      example:
+        id: id
+        submittedAt: 2000-01-23T04:56:07.000+00:00
+        results: results
+        status: status
+    inline_response_200_5:
       type: object
       properties:
         id:
@@ -893,7 +969,7 @@ components:
           type: string
       example:
         exerciseId: exerciseId
-    inline_response_200_5:
+    inline_response_200_6:
       type: object
       properties:
         id:
@@ -921,7 +997,7 @@ components:
         description: description
         id: id
         title: title
-    inline_response_200_3_results:
+    Submission_results:
       type: object
       properties:
         input:

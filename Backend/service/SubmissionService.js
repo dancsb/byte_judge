@@ -29,6 +29,37 @@ exports.getSubmissionStatus = function(id) {
 
 
 /**
+ * Get all submissions for a specific exercise by a user
+ * Returns a list of all submissions for a specific exercise
+ *
+ * exerciseId String The ID of the exercise
+ * returns List
+ **/
+exports.getSubmissionsByExercise = function(userId, exerciseId) {
+  return new Promise(async function(resolve, reject) {
+    try {
+      const submissions = await Submission.find({ userId, exerciseId });
+
+      const mappedSubmissions = submissions.map(submission => {
+        const passedCount = submission.results?.filter(result => result.status === 'PASSED').length || 0;
+        const totalCount = submission.results?.length || 0;
+        return {
+          id: submission._id,
+          status: submission.status,
+          submittedAt: submission.submittedAt,
+          results: `${passedCount}/${totalCount}`
+        };
+      });
+      
+      resolve(mappedSubmissions);
+    } catch (err) {
+      reject({ status: 500, message: err.message });
+    }
+  });
+};
+
+
+/**
  * Submit a new code solution
  * Accepts userId, exerciseId, and sourceCode. Queues the submission for evaluation.
  *
@@ -48,3 +79,4 @@ exports.submitSolution = function(body) {
     }
   });
 }
+

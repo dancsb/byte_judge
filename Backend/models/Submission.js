@@ -16,7 +16,7 @@ const SubmissionSchema = new mongoose.Schema({
   sourceCode: String,
   status: { type: String, enum: ['QUEUED', 'RUNNING', 'DONE', 'ERROR'], default: 'QUEUED' },
   results: [ResultSchema],
-  createdAt: { type: Date, default: Date.now },
+  submittedAt: { type: Date, default: Date.now },
   compilationError: String
 });
 

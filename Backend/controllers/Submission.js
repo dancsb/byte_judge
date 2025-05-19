@@ -17,6 +17,19 @@ module.exports.getSubmissionStatus = function getSubmissionStatus (req, res, nex
     });
 };
 
+module.exports.getSubmissionsByExercise = function getSubmissionsByExercise (req, res, next, exerciseId) {
+  const userId = verifyToken(req, res);
+  if (!userId) return;
+
+  Submission.getSubmissionsByExercise(userId, exerciseId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.submitSolution = function submitSolution (req, res, next, body) {
   const userId = verifyToken(req, res);
   if (!userId) return;

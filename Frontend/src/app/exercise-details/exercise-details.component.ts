@@ -19,6 +19,7 @@ export class ExerciseDetailsComponent {
   exercise: any;
   exerciseService: ExerciseService = inject(ExerciseService);
   submissionForm: FormGroup;
+  pastSubmissions: any[] = [];
 
   constructor(private route: ActivatedRoute, private submissionService: SubmissionService, private fb: FormBuilder, private toastr: ToastrService) {
     const exerciseId = this.route.snapshot.paramMap.get('id');
@@ -35,8 +36,17 @@ export class ExerciseDetailsComponent {
   private async loadExerciseDetails(id: string) {
     try {
       this.exercise = await this.exerciseService.getExerciseById(id);
+      this.loadPastSubmissions(id);
     } catch (error) {
       console.error('Failed to load exercise details:', error);
+    }
+  }
+
+  private async loadPastSubmissions(exerciseId: string) {
+    try {
+      this.pastSubmissions = await this.submissionService.getSubmissionsByExercise(exerciseId);
+    } catch (error) {
+      console.error('Failed to load exercises:', error);
     }
   }
 

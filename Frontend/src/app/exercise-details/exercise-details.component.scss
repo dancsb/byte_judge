@@ -92,3 +92,74 @@
 .submission-form .btn:hover {
   background-color: #0056b3;
 }
+
+.past-submissions {
+  margin: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.past-submissions .section-title {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.submissions-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.submission-card {
+  flex: 1 1 calc(33.333% - 20px);
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.submission-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.submission-date {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.submission-status {
+  font-size: 0.9em;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.status-success {
+  color: #28a745;
+}
+
+.status-failed {
+  color: #dc3545;
+}
+
+.status-pending {
+  color: #ffc107;
+}
+
+.submission-body {
+  font-size: 0.9em;
+  color: #555;
+}
+
+.submission-number {
+  font-size: 1em;
+  font-weight: bold;
+  color: #007bff;
+  margin-right: 10px;
+}

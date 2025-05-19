@@ -40,3 +40,23 @@
 
   <button (click)="submitSolution()" class="btn btn-primary">Submit</button>
 </div>
+
+<div class="past-submissions" *ngIf="pastSubmissions.length > 0">
+  <h3 class="section-title">Past Submissions</h3>
+  <div class="submissions-container">
+    <div class="submission-card" *ngFor="let submission of pastSubmissions; let i = index">
+      <div class="submission-header">
+        <span class="submission-number">#{{ i + 1 }}</span>
+        <span class="submission-date">{{ submission.submittedAt | date:'medium' }}</span>
+        <span class="submission-status" [ngClass]="{
+          'status-success': submission.status === 'Success',
+          'status-failed': submission.status === 'Failed',
+          'status-pending': submission.status === 'Pending'
+        }">{{ submission.status }}</span>
+      </div>
+      <div class="submission-body">
+        <p><strong>Results:</strong> {{ submission.results || 'N/A' }}</p>
+      </div>
+    </div>
+  </div>
+</div>
