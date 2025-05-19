@@ -27,6 +27,8 @@ exports.getSubmissionStatus = function(id) {
 
       resolve({
         status: submission.status,
+        language: submission.language,
+        submittedAt: submission.submittedAt,
         results: submission.status === 'DONE' ? mappedResults : null,
         compilationError: submission.compilationError || null
       });
@@ -56,6 +58,7 @@ exports.getSubmissionsByExercise = function(userId, exerciseId) {
           id: submission._id,
           status: submission.status,
           submittedAt: submission.submittedAt,
+          language: submission.language,
           results: `${passedCount}/${totalCount}`
         };
       });
@@ -78,8 +81,8 @@ exports.getSubmissionsByExercise = function(userId, exerciseId) {
 exports.submitSolution = function(body) {
   return new Promise(async function(resolve, reject) {
     try {
-      const { userId, exerciseId, sourceCode } = body;
-      const submission = new Submission({ userId, exerciseId, sourceCode });
+      const { userId, exerciseId, sourceCode, language } = body;
+      const submission = new Submission({ userId, exerciseId, sourceCode, language });
       await submission.save();
       await enqueueSubmission(submission);
       resolve({ message: 'Submission received', submissionId: submission._id });

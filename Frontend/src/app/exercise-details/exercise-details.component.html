@@ -19,7 +19,7 @@
   </ul>
 </div>
 
-<div class="submission-form">
+<form [formGroup]="submissionForm" class="submission-form">
   <h3>Submit Your Solution</h3>
   <div class="form-group">
     <label>Programming Language:</label>
@@ -39,7 +39,7 @@
   </div>
 
   <button (click)="submitSolution()" class="btn btn-primary">Submit</button>
-</div>
+</form>
 
 <div class="past-submissions" *ngIf="pastSubmissions.length > 0">
   <h3 class="section-title">Past Submissions</h3>
@@ -54,26 +54,36 @@
           'status-pending': submission.status === 'Pending'
         }">{{ submission.status }}</span>
       </div>
-      <div class="submission-body">
-        <p><strong>Results:</strong> {{ submission.results || 'N/A' }}</p>
+      <div class="submission-body" style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <p>
+          <strong>Results:</strong>
+          <span [ngClass]="{'results-passed': submission.results.split('/')[0] === submission.results.split('/')[1] && submission.results !== '0/0'}">
+            {{ submission.results || 'N/A' }}
+          </span>
+        </p>
+        <p class="submission-language" style="font-size: 0.9em; color: gray;">
+          <strong>Language:</strong> {{ submission.language || 'Unknown' }}
+        </p>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Modal for displaying submission details -->
-<div class="modal" *ngIf="showModal">
-  <div class="modal-content">
+<div class="modal" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
     <span class="close" (click)="closeModal()">&times;</span>
     <h3>Submission Details</h3>
     <p><strong>Status:</strong> {{ selectedSubmission?.status }}</p>
+    <p><strong>Language:</strong> {{ selectedSubmission?.language || 'Unknown' }}</p>
+    <p><strong>Submitted At:</strong> {{ selectedSubmission?.submittedAt | date:'medium' }}</p>
 
-    <div *ngIf="selectedSubmission?.status === 'ERROR'">
+    <div *ngIf="selectedSubmission?.status === 'COMPILE_ERROR'">
       <p><strong>Compilation Error:</strong></p>
       <pre>{{ selectedSubmission?.compilationError }}</pre>
     </div>
 
-    <ul *ngIf="selectedSubmission?.status !== 'ERROR' && selectedSubmission?.results" class="testcase-list">
+    <ul *ngIf="selectedSubmission?.status !== 'COMPILE_ERROR' && selectedSubmission?.results" class="testcase-list">
       <li *ngFor="let result of selectedSubmission.results; let i = index" class="testcase-item">
         <div class="testcase-header">
           <span class="testcase-number">#{{ i + 1 }}</span>

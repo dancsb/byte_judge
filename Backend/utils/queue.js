@@ -15,7 +15,7 @@ async function enqueueSubmission(submission) {
     try {
       const result = await runSubmission(submission);
       if (result.compilationError) {
-        submission.status = 'ERROR';
+        submission.status = 'COMPILE_ERROR';
         submission.compilationError = result.compilationError;
         submission.results = [];
       } else {

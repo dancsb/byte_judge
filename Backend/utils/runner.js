@@ -11,7 +11,8 @@ module.exports = async function runSubmission(submission) {
   const submissionPath = path.join(__dirname, 'submissions', submissionId);
   fs.mkdirSync(submissionPath, { recursive: true });
 
-  fs.writeFileSync(path.join(submissionPath, 'main.c'), submission.sourceCode);
+  const fileName = submission.language === 'Python' ? 'main.py' : 'main.c';
+  fs.writeFileSync(path.join(submissionPath, fileName), submission.sourceCode);
 
   const inputsPath = path.join(submissionPath, 'inputs');
   fs.mkdirSync(inputsPath);
@@ -20,8 +21,10 @@ module.exports = async function runSubmission(submission) {
     fs.writeFileSync(path.join(inputsPath, `t${i}.txt`), testCase.input);
   });
 
+  const image = submission.language === 'Python' ? 'bytejudge-python-runner' : 'bytejudge-c-runner';
+
   const container = await docker.createContainer({
-    Image: 'bytejudge-c-runner',
+    Image: image,
     Cmd: ['/runner/run.sh'],
     WorkingDir: '/app',
     Env: [`TIME_LIMIT=${exercise.timeLimit}s`],

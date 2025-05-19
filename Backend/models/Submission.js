@@ -14,7 +14,8 @@ const SubmissionSchema = new mongoose.Schema({
   userId: String,
   exerciseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Exercise' },
   sourceCode: String,
-  status: { type: String, enum: ['QUEUED', 'RUNNING', 'DONE', 'ERROR'], default: 'QUEUED' },
+  language: { type: String, enum: ['C', 'Python'], required: true },
+  status: { type: String, enum: ['QUEUED', 'RUNNING', 'DONE', 'COMPILE_ERROR', 'ERROR'], default: 'QUEUED' },
   results: [ResultSchema],
   submittedAt: { type: Date, default: Date.now },
   compilationError: String

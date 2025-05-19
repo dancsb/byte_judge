@@ -123,6 +123,11 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.submission-card .results-passed {
+  color: #28a745; /* Green color for passed results */
+  font-weight: bold;
+}
+
 .submission-header {
   display: flex;
   justify-content: space-between;
